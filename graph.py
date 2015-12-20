@@ -6,10 +6,25 @@ import matplotlib.pyplot as plt
 from sys import argv
 
 
-def parse_db(dbFile):
+def graph_db(dbFileUp, dbFileDown):
+    dataUp = load_db(dbFileUp)
+    dataDown = load_db(dbFileDown)
+    timesUp, bwsUp = parse_data(dataUp)
+    timesDown, bwsDown = parse_data(dataDown)
+    plotUp, = plt.plot(timesUp, bwsUp)
+    plotDown, =  plt.plot(timesDown, bwsDown)
+    plt.legend([plotUp, plotDown], ['Up', 'Down'])
+    plt.show()
+
+
+def load_db(dbFile):
     db = open(dbFile, 'r')
     data = json.load(db)
     db.close()
+    return data
+
+
+def parse_data(data):
     bws = []
     times = []
     for result in data:
@@ -18,10 +33,7 @@ def parse_db(dbFile):
             bws.append(result["end"]["sum_sent"]["bits_per_second"])
         except:
             bws.append(0)
-    plt.plot(times, bws)
-    plt.show()
     return times, bws
 
-
 if __name__ == "__main__":
-    print(parse_db(argv[1]))
+    graph_db(argv[1], argv[2])
