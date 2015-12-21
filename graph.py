@@ -32,7 +32,10 @@ def parse_data(data):
         try:
             bws.append(result["end"]["sum_sent"]["bits_per_second"])
         except:
-            bws.append(0)
+            if result["error"] == "error - the server is busy running a test. try again later":
+                del times[-1]
+            else:
+                bws.append(0)
     return times, bws
 
 if __name__ == "__main__":
