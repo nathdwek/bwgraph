@@ -20,6 +20,8 @@ def load_test():
     result = json.load(stdin)
     if "timestamp" not in result["start"]:
         result["start"]["timestamp"] = {"timesecs": round(time())}
+    if "sum_sent" not in result["end"]:
+        result["end"]["sum_sent"] = {"bits_per_second": 0}
     if result.get("error", "") == "error - the server is busy running a test. try again later":
         result = {}
     return result
