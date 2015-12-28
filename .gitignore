@@ -1,2 +1,2 @@
-*.json.t
+*.csv.t
 __pycache__/
