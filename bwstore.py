@@ -9,8 +9,8 @@ from sys import stdin, argv
 def add_test(result, dbFile):
     if result:
         with open(dbFile, 'a', newline='') as db:
-            writer = csv.writer(db, delimiter=';',
-                                quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            writer = csv.writer(db, delimiter=',',
+                                quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
             writer.writerow([result["start"]["timestamp"]["timesecs"],
                             result["end"]["sum_sent"]["bits_per_second"],
                             result.get("error", "")])
