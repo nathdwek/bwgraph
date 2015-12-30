@@ -1,42 +1,38 @@
 #!/usr/bin/env python3
 
-
-import json
+import csv
 import matplotlib.pyplot as plt
+from matplotlib.dates import epoch2num, DateFormatter
 from sys import argv
 
 
-def graph_db(dbFileUp, dbFileDown):
-    dataUp = load_db(dbFileUp)
-    dataDown = load_db(dbFileDown)
-    timesUp, bwsUp = parse_data(dataUp)
-    timesDown, bwsDown = parse_data(dataDown)
-    plotUp, = plt.plot(timesUp, bwsUp)
-    plotDown, =  plt.plot(timesDown, bwsDown)
-    plt.legend([plotUp, plotDown], ['Up', 'Down'])
-    plt.show()
-
-
-def load_db(dbFile):
-    db = open(dbFile, 'r')
-    data = json.load(db)
-    db.close()
-    return data
-
-
-def parse_data(data):
+def plotBW(db, ax):
     bws = []
     times = []
-    for result in data:
-        times.append(result["start"]["timestamp"]["timesecs"])
-        try:
-            bws.append(result["end"]["sum_sent"]["bits_per_second"])
-        except:
-            if result["error"] == "error - the server is busy running a test. try again later":
-                del times[-1]
-            else:
-                bws.append(0)
-    return times, bws
+    with open(db) as csvFile:
+        reader = csv.DictReader(csvFile, delimiter=',')
+        for row in reader:
+            bws.append(float(row['bandwidth'])/1e6)
+            times.append(epoch2num(int(row['epoch_time'])))
+    ax.plot_date(times, bws, '-')
 
 if __name__ == "__main__":
-    graph_db(argv[1], argv[2])
+    fig, ax = plt.subplots()
+    db1 = argv[1]
+    db2 = argv[2]
+    plotBW(db1, ax)
+    plotBW(db2, ax)
+    plt.ylabel('Bandwidth [Mbit/s]')
+    plt.xlabel('Time')
+    # Choose your xtick format string
+    date_fmt = '%d-%m-%y %H:%M'
+
+    # Use a DateFormatter to set the data to the correct format.
+    date_formatter = DateFormatter(date_fmt)
+    ax.xaxis.set_major_formatter(date_formatter)
+
+    # Sets the tick labels diagonal so they fit easier.
+    fig.autofmt_xdate()
+    plt.legend([db1, db2])
+
+    plt.show()
