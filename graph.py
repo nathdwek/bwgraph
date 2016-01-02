@@ -31,7 +31,6 @@ def present(timesBwsDict):
     # Sets the tick labels diagonal so they fit easier.
     fig.autofmt_xdate()
 
-    plt.show()
     plt.legend([argv[1], argv[2]])
 
 if __name__ == "__main__":
@@ -40,3 +39,7 @@ if __name__ == "__main__":
         times, bws = bwRead(argv[i])
         timesBwsDict[times] = bws
     present(timesBwsDict)
+    if len(argv) >= 4:
+        plt.savefig(argv[3])
+    else:
+        plt.show()
