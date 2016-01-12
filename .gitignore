@@ -1,3 +1,4 @@
 *.csv.t
 *.pdf.t
 __pycache__/
+pull.sh
